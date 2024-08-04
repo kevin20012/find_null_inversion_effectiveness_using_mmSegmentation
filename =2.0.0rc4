@@ -1,0 +1,18 @@
+Collecting mmcv-full
+  Using cached mmcv-full-1.7.2.tar.gz (607 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Requirement already satisfied: addict in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from mmcv-full) (2.4.0)
+Requirement already satisfied: numpy in /shared/home/vclp/.local/lib/python3.8/site-packages (from mmcv-full) (1.22.0)
+Requirement already satisfied: packaging in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from mmcv-full) (24.1)
+Requirement already satisfied: Pillow in /shared/home/vclp/.local/lib/python3.8/site-packages (from mmcv-full) (9.0.0)
+Requirement already satisfied: pyyaml in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from mmcv-full) (6.0.1)
+Requirement already satisfied: yapf in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from mmcv-full) (0.40.2)
+Requirement already satisfied: importlib-metadata>=6.6.0 in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from yapf->mmcv-full) (8.2.0)
+Requirement already satisfied: platformdirs>=3.5.1 in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from yapf->mmcv-full) (4.2.2)
+Requirement already satisfied: tomli>=2.0.1 in /shared/home/vclp/miniconda3/envs/openmmlab/lib/python3.8/site-packages (from yapf->mmcv-full) (2.0.1)
+Requirement already satisfied: zipp>=0.5 in /shared/home/vclp/.local/lib/python3.8/site-packages (from importlib-metadata>=6.6.0->yapf->mmcv-full) (3.7.0)
+Building wheels for collected packages: mmcv-full
+  Building wheel for mmcv-full (setup.py): started
+  Building wheel for mmcv-full (setup.py): still running...
+  Building wheel for mmcv-full (setup.py): finished with status 'canceled'
