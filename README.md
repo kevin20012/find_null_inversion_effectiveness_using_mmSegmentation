@@ -65,10 +65,10 @@ make_csv.py --json_path [vis_data내의 [실행시간으로 정의된 이름].js
 각 Log 파일들로부터 metric결과를 종합해 result.xlsx를 반환해줍니다.
 
 ## mmSegmentation의 간단한 설명
-### 구조
+### | 구조
 기본적으로 train.py를 살펴보면, configs 디렉토리 내의 config 파일 하나만을 가지고 학습을 진행하는 것을 볼 수 있습니다.  
 이 config파일안에 데이터셋, 모델 등 모든 내용이 들어있습니다. 그럼 코드를 보면서 진행해보겠습니다.
-#### Config 파일
+#### * Config 파일
 ```python
 # _base__ 리스트를 통해 
 _base_ = [
@@ -87,7 +87,7 @@ model = dict(
     auxiliary_head=dict(num_classes=3))
 
 ```
-#### Dataset config 파일
+#### * Dataset config 파일
 configs/_base_/datasets 디렉토리 내에 위치합니다.  
 해당 config 파일은 데이터셋에 대한 옵션을 담고 있습니다.  
 ```python
@@ -101,7 +101,7 @@ val_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU']) #평가 방법을 �
 test_evaluator = val_evaluator
 ```
 
-### 새로운 데이터셋을 사용하고 싶다면  
+### | 새로운 데이터셋을 사용하고 싶다면
 mmseg/datasets 디렉토리 내에 새로운 데이터에 대한 정보를 담은 클래스를 만들어주어야합니다.  
 ```python
 from mmseg.registry import DATASETS
