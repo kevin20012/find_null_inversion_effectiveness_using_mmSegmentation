@@ -18,10 +18,8 @@ from mmseg.registry import DATASETS
 from .basesegdataset import BaseSegDataset
 
 
-
 @DATASETS.register_module()
 class WTADataset(BaseSegDataset):
-
     METAINFO = dict(
         classes=('defect', 'attached', 'broken'),
         palette=[[0, 0, 0], [255, 0, 0], [0, 255, 0]])

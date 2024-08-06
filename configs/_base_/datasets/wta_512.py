@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'WTADataset'
-data_root = '/shared/home/vclp/hyunwook/junhyung/mmsegmentation/data/wta_512'
+data_root = './data/wta_512/'
 crop_size = (256, 256)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
