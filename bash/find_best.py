@@ -28,6 +28,7 @@ def main():
             else:
                 if best_score <= dic[metric]:
                     best_step = dic['step']
+                    best_score = dic[metric]
         except:
             pass
 

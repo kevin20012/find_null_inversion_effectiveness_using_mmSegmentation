@@ -1,16 +1,24 @@
 #! /bin/bash
-PROJECT_NAME=test #work_dirs 내의 저장되는 디렉토리의 이름입니다.
+read -p "Enter Project Name : " PROJECT_NAME #work_dirs 내의 저장되는 디렉토리의 이름입니다.
+if [ "$PROJECT_NAME" == "" ]; then
+    echo "Empty name is not acceptable."
+    exit 1
+fi
 CUDA_VISIBLE_DEVICES=0 
-GPU_COUNT=1 #GPU개수 입력
+read -p "Enter Gpu Count : " GPU_COUNT #GPU개수 입력
+if (($GPU_COUNT <= 0)); then
+    echo "0 or Negative number of Gpu is not acceptable."
+    exit 1
+fi
 MODEL=( #시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
-    deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta-256x256\ 
+    # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta-256x256\ 
     bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta-256x256\
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-256x256
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-256x256
 )
 MODEL_AUG=( #aug 시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
-    deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta_aug-256x256\ 
+    # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta_aug-256x256\ 
     bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta_aug-256x256\
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-256x256
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-256x256
 )
 MODEL_CONFIG_PATH=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/configs
 WORK_DIR=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/work_dirs
