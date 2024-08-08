@@ -1,7 +1,7 @@
 #! /bin/bash
-PROJECT_NAME=train1 #work_dirs 내의 저장되는 디렉토리의 이름입니다.
+PROJECT_NAME=test #work_dirs 내의 저장되는 디렉토리의 이름입니다.
 CUDA_VISIBLE_DEVICES=0 
-GPU_COUNT=2 #GPU개수 입력
+GPU_COUNT=1 #GPU개수 입력
 MODEL=( #시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
     deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta-256x256\ 
     bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta-256x256\
@@ -14,6 +14,8 @@ MODEL_AUG=( #aug 시도해볼 모델 - config py파일의 상위 디렉토리의
 )
 MODEL_CONFIG_PATH=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/configs
 WORK_DIR=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/work_dirs
+FIND_BEST_DIR=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/bash
+METRIC=mIoU
 
 echo "🔥🔥🔥🔥🔥start training and testing🔥🔥🔥🔥🔥"
 mkdir -p $WORK_DIR/$PROJECT_NAME
@@ -44,9 +46,12 @@ do
 
     echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Test Start=================" >> $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
     # 추론 시작
+    vis_data_path=$WORK_DIR/$PROJECT_NAME/origin/$model/train/$(ls $WORK_DIR/$PROJECT_NAME/origin/$model/train | grep [0-9][0-9][0-9]_[0-9][0-9][0-9])/vis_data
+    json_log_path=$vis_data_path/$(ls $vis_data_path | grep [0-9]*_[0-9]*.json)
+    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path --metric $METRIC`.pth > $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/best_checkpoint
     mkdir -p $WORK_DIR/$PROJECT_NAME/origin/$model/test
     python tools/test.py \
-    $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/`basename $(< $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/last_checkpoint)` --out $WORK_DIR/$PROJECT_NAME/origin/$model/test > $WORK_DIR/$PROJECT_NAME/origin/$model/test/test_log.txt
+    $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/$(< $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/best_checkpoint) --out $WORK_DIR/$PROJECT_NAME/origin/$model/test > $WORK_DIR/$PROJECT_NAME/origin/$model/test/test_log.txt
 
     echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Test End=================" >> $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
     echo " " >> $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
@@ -62,24 +67,27 @@ do
     echo "$(date +%Y-%m-%d-%H:%M:%S) =================$model=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
     echo "\n$(date +%Y-%m-%d-%H:%M:%S) 🚀🚀🚀🚀🚀$model Start!!!🚀🚀🚀🚀🚀"
 
-    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Train Start=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
+    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Augmentation Train Start=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
     # 학습 시작
     bash tools/dist_train.sh \
     $MODEL_CONFIG_PATH/$model.py \
     $GPU_COUNT --work-dir $WORK_DIR/$PROJECT_NAME/aug/$model/train
-    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Train End=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
+    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Augmentation Train End=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
 
 
     #가중치 파일 이동
     mkdir -p $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt
     mv $WORK_DIR/$PROJECT_NAME/aug/$model/train/iter_* $WORK_DIR/$PROJECT_NAME/aug/$model/train/last_checkpoint $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt
 
-    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Test Start=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
+    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Augmentation Test Start=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
     # 추론 시작
+    vis_data_path=$WORK_DIR/$PROJECT_NAME/aug/$model/train/$(ls $WORK_DIR/$PROJECT_NAME/aug/$model/train | grep [0-9][0-9][0-9]_[0-9][0-9][0-9])/vis_data
+    json_log_path=$vis_data_path/$(ls $vis_data_path | grep [0-9]*_[0-9]*.json)
+    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path --metric $METRIC`.pth > $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/best_checkpoint
     mkdir -p $WORK_DIR/$PROJECT_NAME/aug/$model/test
     python tools/test.py \
-    $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/`basename $(< $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/last_checkpoint)` --out $WORK_DIR/$PROJECT_NAME/aug/$model/test > $WORK_DIR/$PROJECT_NAME/aug/$model/test/test_log.txt
+    $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/$(< $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/best_checkpoint) --out $WORK_DIR/$PROJECT_NAME/aug/$model/test > $WORK_DIR/$PROJECT_NAME/aug/$model/test/test_log.txt
 
-    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Original Test End=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
+    echo "$(date +%Y-%m-%d-%H:%M:%S) =================Augmentation Test End=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
     echo " " >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
 done
