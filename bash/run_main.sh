@@ -12,13 +12,17 @@ if (($GPU_COUNT <= 0)); then
 fi
 MODEL=( #시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
     # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta-256x256\ 
-    bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta-256x256\
+    # bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta-256x256\
     # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-256x256
+    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-512x512\
+    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-1024x1024
 )
 MODEL_AUG=( #aug 시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
     # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta_aug-256x256\ 
-    bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta_aug-256x256\
+    # bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta_aug-256x256\
     # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-256x256
+    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-512x512\
+    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-1024x1024
 )
 MODEL_CONFIG_PATH=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/configs
 WORK_DIR=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/work_dirs
@@ -56,7 +60,7 @@ do
     # 추론 시작
     vis_data_path=$WORK_DIR/$PROJECT_NAME/origin/$model/train/$(ls $WORK_DIR/$PROJECT_NAME/origin/$model/train | grep [0-9][0-9][0-9]_[0-9][0-9][0-9])/vis_data
     json_log_path=$vis_data_path/$(ls $vis_data_path | grep [0-9]*_[0-9]*.json)
-    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path --metric $METRIC`.pth > $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/best_checkpoint
+    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path`.pth > $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/best_checkpoint
     mkdir -p $WORK_DIR/$PROJECT_NAME/origin/$model/test
     python tools/test.py \
     $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/$(< $WORK_DIR/$PROJECT_NAME/origin/$model/train/ckpt/best_checkpoint) --out $WORK_DIR/$PROJECT_NAME/origin/$model/test > $WORK_DIR/$PROJECT_NAME/origin/$model/test/test_log.txt
@@ -91,7 +95,7 @@ do
     # 추론 시작
     vis_data_path=$WORK_DIR/$PROJECT_NAME/aug/$model/train/$(ls $WORK_DIR/$PROJECT_NAME/aug/$model/train | grep [0-9][0-9][0-9]_[0-9][0-9][0-9])/vis_data
     json_log_path=$vis_data_path/$(ls $vis_data_path | grep [0-9]*_[0-9]*.json)
-    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path --metric $METRIC`.pth > $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/best_checkpoint
+    echo iter_`python $FIND_BEST_DIR/find_best.py --json_log_path $json_log_path`.pth > $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/best_checkpoint
     mkdir -p $WORK_DIR/$PROJECT_NAME/aug/$model/test
     python tools/test.py \
     $MODEL_CONFIG_PATH/$model.py $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/$(< $WORK_DIR/$PROJECT_NAME/aug/$model/train/ckpt/best_checkpoint) --out $WORK_DIR/$PROJECT_NAME/aug/$model/test > $WORK_DIR/$PROJECT_NAME/aug/$model/test/test_log.txt

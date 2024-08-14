@@ -5,14 +5,14 @@ from ast import literal_eval
 def parser_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--json_log_path', type=str, help="json 로그 파일의 위치")
-    parser.add_argument('--metric', default='mIoU',type=str, help="평가방법 선택 mIoU, aAcc, mAcc")
+    # parser.add_argument('--metric', default='mIoU',type=str, help="평가방법 선택 mIoU, aAcc, mAcc")
 
     return parser.parse_args()
 
 def main():
     args = parser_args()
     json_log = args.json_log_path
-    metric = args.metric
+    # metric = args.metric
 
     f = open(json_log, 'r')
     text = f.read()
@@ -26,9 +26,10 @@ def main():
             if 'mIoU' not in dic.keys():
                 pass
             else:
-                if best_score <= dic[metric]:
+                cur_value = (dic['aAcc']+dic['mAcc']+dic['mIoU'])/3 #모든 metric을 고려
+                if best_score <= cur_value:
                     best_step = dic['step']
-                    best_score = dic[metric]
+                    best_score = cur_value
         except:
             pass
 
