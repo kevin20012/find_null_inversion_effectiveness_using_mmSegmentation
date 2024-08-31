@@ -10,19 +10,48 @@ if (($GPU_COUNT <= 0)); then
     echo "0 or Negative number of Gpu is not acceptable."
     exit 1
 fi
-MODEL=( #시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
+GROUP_1=( #시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
+    # 처음 비교
     # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta-256x256\ 
     # bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta-256x256\
     # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-256x256
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-512x512\
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-1024x1024
+
+    # crop_size에 따른 비교
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-512x512\
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta-1024x1024
+
+    #결함 : 정상 비율에 따른 비교
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta-512x512\
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta_ratio_10-512x512
+
+    #CNN 기반 모델 - FCN, U-Net, Deeplabv3+, PSPNet
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta-512x512\
+    # pspnet/pspnet_r50-d8_4xb4-40k_wta512-512x512\
+    #트랜스포머 기반 모델 - SETR, Swin, Segmenter, Mask2Former
+    # setr/setr_vit-l_naive_8xb1-40k_wta512-512x512\
+    # segformer/segformer_mit-b0_8xb2-40k_wta512-512x512
+
 )
-MODEL_AUG=( #aug 시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
+GROUP_2=( #aug 시도해볼 모델 - config py파일의 상위 디렉토리의 이름도 함께 써주어야합니다.
+    # 처음 비교
     # deeplabv3/deeplabv3_r50-d8_4xb4-40k_wta_aug-256x256\ 
     # bisenetv1/bisenetv1_r18-d32_4xb4-40k_wta_aug-256x256\
     # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-256x256
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-512x512\
-    fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-1024x1024
+
+    # crop_size에 따른 비교
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-512x512\
+    # fastfcn/fastfcn_r50-d32_jpu_psp_4xb4-40k_wta_aug-1024x1024
+
+    #결함 : 정상 비율에 따른 비교
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta_aug_wolora-512x512\
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta_aug_wolora_ratio_10-512x512
+
+    #CNN 기반 모델 - FCN, U-Net, Deeplabv3+, PSPNet
+    # deeplabv3plus/deeplabv3plus_r18-d8_4xb2-40k_wta_aug_wolora-512x512\
+    # pspnet/pspnet_r50-d8_4xb4-40k_wta512_aug-512x512\
+    #트랜스포머 기반 모델 - SETR, Swin, Segmenter, Mask2Former
+    # setr/setr_vit-l_naive_8xb1-40k_wta512_aug-512x512\
+    # segformer/segformer_mit-b0_8xb2-40k_wta512_aug-512x512
 )
 MODEL_CONFIG_PATH=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/configs
 WORK_DIR=/shared/home/vclp/hyunwook/junhyung/mmsegmentation/work_dirs
@@ -39,7 +68,7 @@ echo "$(date +%Y-%m-%d-%H:%M:%S) <<  ${PROJECT_NAME}  >>" > $WORK_DIR/$PROJECT_N
 mkdir -p $WORK_DIR/$PROJECT_NAME/origin
 touch $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
 echo "$(date +%Y-%m-%d-%H:%M:%S) <<  ${PROJECT_NAME}  >>" > $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
-for model in ${MODEL[@]}
+for model in ${GROUP_1[@]}
 do
     echo "$(date +%Y-%m-%d-%H:%M:%S) =================$model=================" >> $WORK_DIR/$PROJECT_NAME/origin/origin_log.txt
     echo "\n$(date +%Y-%m-%d-%H:%M:%S) 🚀🚀🚀🚀🚀$model Start!!!🚀🚀🚀🚀🚀"
@@ -74,7 +103,7 @@ done
 mkdir -p $WORK_DIR/$PROJECT_NAME/aug
 touch $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
 echo "$(date +%Y-%m-%d-%H:%M:%S) <<  ${PROJECT_NAME}  >>" > $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
-for model in ${MODEL_AUG[@]}
+for model in ${GROUP_2[@]}
 do
     echo "$(date +%Y-%m-%d-%H:%M:%S) =================$model=================" >> $WORK_DIR/$PROJECT_NAME/aug/aug_log.txt
     echo "\n$(date +%Y-%m-%d-%H:%M:%S) 🚀🚀🚀🚀🚀$model Start!!!🚀🚀🚀🚀🚀"

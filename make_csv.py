@@ -5,14 +5,12 @@ from ast import literal_eval
 
 
 #json 파일을 입력으로 받아 해당 파일을 요약해서 csv 파일을 만들어줍니다.
-# 필요 파일 : train 폴더 내에 [vis_data 디렉토리 내의 json파일], [log파일] 2개입니다.
-# 각각을 --json_path, --defect_matric_path 에 해당 파일의 경로를 인수로 주면 작동합니다.
-
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--log_path', type=str, help='json, log 파일 2개가 존재하는 위치를 입력하면 아래 옵션을 입력하지 않고 자동으로 만들어줍니다.')
     parser.add_argument('--json_path', type=str, help="json 로그 파일의 위치")
     parser.add_argument('--defect_matric_path', type=str, help="각 결함별 metric이 나와있는 Log 파일위치")
-    parser.add_argument('--out_path', default='./', help="결과 파일 저장 위치")
+    parser.add_argument('--out_path', type=str, help="결과 파일 저장 위치")
 
     return parser.parse_args()
 
@@ -20,9 +18,23 @@ def parse_args():
 
 def main():
     args = parse_args()
-    json_path = args.json_path
-    metric_path = args.defect_matric_path
-    out_path = args.out_path
+    if args.log_path != None:
+        for item in os.listdir(args.log_path):
+            if item.find(".json") != -1:
+                print("find json file!")
+                json_path = os.path.join(args.log_path, item)
+            elif item.find(".log") != -1:
+                print("find log file!")
+                metric_path = os.path.join(args.log_path, item)
+            else:
+                pass
+    else:
+        json_path = args.json_path
+        metric_path = args.defect_matric_path
+    if args.out_path != None:
+        out_path = args.out_path
+    else:
+        out_path = args.log_path
     loss = []
     step = []
     miou = []
@@ -70,7 +82,6 @@ def main():
 
     step = 0
     for line in text:
-        print(line)
         if line.find("Saving checkpoint") > 0:
             step = int(line.replace(' ', '').split('at')[1].split('iter')[0])
 

@@ -1,4 +1,4 @@
-_base_ = ['./deeplabv3plus_r50-d8.py',
+_base_ = ['../_base_/models/deeplabv3plus_r50-d8.py',
           '../_base_/datasets/wta_512_aug_wolora_ratio_10_512x512.py', '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_40k.py'
 ]

@@ -12,7 +12,7 @@ def get_args_parser():
     parser.add_argument('--show_count', type=bool, default=False, help='show status according to number of defects and normal numbers')
     parser.add_argument('--normal_count', type=int, help='count of normal image')
     parser.add_argument('--defect_count', type=int, help='count of defect image')
-    parser.add_argument('--out_path', type=str, default="./data" ,help='output path')
+    parser.add_argument('--out_path', type=str, default="/shared/home/vclp/hyunwook/junhyung/mmsegmentation/data" ,help='output path')
     return parser.parse_args()
 
 def save_data(args, normal_list, defect_list):
