@@ -118,3 +118,5 @@ mmseg/.mim
 
 # Pytorch
 *.pth
+
+wta_512_to_rgb
