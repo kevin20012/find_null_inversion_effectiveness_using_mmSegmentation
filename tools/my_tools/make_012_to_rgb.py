@@ -7,7 +7,7 @@ from tqdm import tqdm
 BLENDING_ALPHA = 0.5
 
 def get_args_parser():
-    parser = argparse.ArgumentParser('check_image_label', add_help=False)
+    parser = argparse.ArgumentParser('make_label_rgb', add_help=False)
     parser.add_argument('--data_dir', type=str, help='path to data dir ex. ~/wta_512', required=True)
     parser.add_argument('--save_dir', type=str, help='path to save dir', required=True)
     return parser.parse_args()

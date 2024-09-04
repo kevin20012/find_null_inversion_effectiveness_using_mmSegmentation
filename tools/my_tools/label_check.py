@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 def get_args_parser():
     parser = argparse.ArgumentParser('check_image_label', add_help=False)
-    parser.add_argument('--label_dir', type=str, help='path to ann_dir', required=True)
+    parser.add_argument('--label_dir', type=str, help='path to data dir', required=True)
     return parser.parse_args()
 
 def check_label(ann_dir):

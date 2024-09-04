@@ -119,4 +119,8 @@ mmseg/.mim
 # Pytorch
 *.pth
 
-wta_512_to_rgb
+wta_512_to_rgb/
+wta_512_aug_relabeling_to_rgb/
+wta_relabeling_backup_to_012/
+data_new_labeling/
+data_relabeling/
